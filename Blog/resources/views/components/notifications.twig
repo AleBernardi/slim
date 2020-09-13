@@ -1,11 +1,11 @@
-{% if flash.getMessege('error') %}
+{% if flash.getMessage('error') %}
     <div class="notification is-danger has-text-centered subtitle is-5">
-        {{ flash.getFirstMessege('error') }}
+        {{ flash.getFirstMessage('error') }}
     </div>
 {% endif %}
 
-{% if flash.getMessege('success') %}
-    <div class="notification is-danger has-text-centered subtitle is-5">
-        {{ flash.getFirstMessege('success') }}
+{% if flash.getMessage('success') %}
+    <div class="notification is-success has-text-centered subtitle is-5">
+        {{ flash.getFirstMessage('success') }}
     </div>
 {% endif %}

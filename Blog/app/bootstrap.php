@@ -37,6 +37,13 @@ $container['flash'] = function ($container) {
     return new Slim\Flash\Messages;
 };
 
+$container['auth'] = function ($container) {
+    return new App\Auth\Auth($container);
+};
+
+$container['upload_directory'] = __DIR__ . '/../public/uploads';
+
+
 $container['view'] = function ($container){
     $view = new Slim\Views\Twig(__DIR__ . '/../resources/views', [
        'cache' => false,
@@ -47,10 +54,15 @@ $container['view'] = function ($container){
         $container->request->getUri()
     ));
 
+    $view->getEnvironment()->addGlobal('flash', $container->flash);
+
+    $view->getEnvironment()->addGlobal('auth', [
+        'check' => $container->auth->check(),
+        'user' => $container->auth->user(),
+    ]);
+
     return $view;
 };
-
-
 
 $container['HomeController'] = function ($container) {
     return new App\Controllers\HomeController($container);
@@ -58,6 +70,14 @@ $container['HomeController'] = function ($container) {
 
 $container['AuthController'] = function ($container) {
     return new App\Controllers\AuthController($container);
+};
+
+$container['UserController'] = function ($container) {
+    return new App\Controllers\UserController($container);
+};
+
+$container['PostController'] = function ($container) {
+    return new App\Controllers\PostController($container);
 };
 
 $app->add(new App\Middleware\DisplayInputErrorsMiddleware($container));

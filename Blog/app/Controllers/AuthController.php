@@ -13,6 +13,14 @@ class AuthController extends Controller {
     public function login($request, $response){
         if($request->isGet())
             return $this->container->view->render($response, 'login.twig');
+
+        if(!$this->container->auth->attempt(
+            $request->getParam('email'),
+            $request->getParam('password'))) {
+                return $response->withRedirect($this->container->router->pathFor('auth.login'));
+            }
+
+        return $response->withRedirect($this->container->router->pathFor('home'));
     }
 
     public function register($request, $response){
@@ -28,8 +36,7 @@ class AuthController extends Controller {
         if($validation->failed())
             return $response->withRedirect($this->container->router->pathFor('auth.register'));
 
-
-        $now = new \DateTime( date('d/m/Y H:i:s'));
+        $now = new \DateTime( date('Y/m/d H:i:s'));
         $now->modify('+1 hour');
         $key = bin2hex(random_bytes(20));
 
@@ -45,5 +52,12 @@ class AuthController extends Controller {
 
         return $response->withRedirect($this->container->router->pathFor('auth.login'));
 
+    }
+
+    public function logout($request, $response) {
+        if(isset($_SESSION['user'])){
+            unset($_SESSION['user']);
+            return $response->withRedirect($this->container->router->pathFor('home'));
+        }
     }
 }
